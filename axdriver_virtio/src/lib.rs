@@ -27,6 +27,9 @@ pub use self::gpu::VirtIoGpuDev;
 #[cfg(feature = "net")]
 pub use self::net::VirtIoNetDev;
 
+mod dummy;
+pub use dummy::DummyTransport;
+
 pub use virtio_drivers::transport::pci::bus as pci;
 pub use virtio_drivers::transport::{mmio::MmioTransport, pci::PciTransport, Transport};
 pub use virtio_drivers::{BufferDirection, Hal as VirtIoHal, PhysAddr};
