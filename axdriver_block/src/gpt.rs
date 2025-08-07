@@ -68,7 +68,7 @@ impl<T: BlockDriverOps> GptPartitionDev<T> {
     /// Will use the first partition that matches the given selection criteria.
     pub fn try_new<F>(mut inner: T, mut predicate: F) -> DevResult<Self>
     where
-        F: FnMut(&GptPartitionEntry) -> bool,
+        F: FnMut(usize, &GptPartitionEntry) -> bool,
     {
         let mut disk = Disk::new(BlockDriverAdapter(&mut inner)).map_err(map_disk_error)?;
 
@@ -89,15 +89,16 @@ impl<T: BlockDriverOps> GptPartitionDev<T> {
 
         let mut range = None;
 
-        for part in disk
+        for (i, part) in disk
             .gpt_partition_entry_array_iter(layout, &mut block_buf)
             .map_err(map_disk_error)?
+            .enumerate()
         {
             let part = part.map_err(map_disk_error)?;
             if part.is_used() {
                 debug!("Partition: {part}");
 
-                if range.is_none() && predicate(&part) {
+                if range.is_none() && predicate(i, &part) {
                     range = Some(part.starting_lba.to_u64()..part.ending_lba.to_u64() + 1);
                     info!("Selected partition: {part}");
                 }
