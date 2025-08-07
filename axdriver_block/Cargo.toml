@@ -12,11 +12,15 @@ repository.workspace = true
 categories.workspace = true
 
 [features]
+default = []
 ramdisk = []
 bcm2835-sdhci = ["dep:bcm2835-sdhci"]
-default = []
+gpt = ["dep:gpt_disk_io"]
+sdmmc = ["dep:simple-sdmmc"]
 
 [dependencies]
-log = "0.4"
 axdriver_base = { workspace = true }
+log = "0.4"
 bcm2835-sdhci = { git = "https://github.com/lhw2002426/bcm2835-sdhci.git", rev = "e974f16", optional = true }
+gpt_disk_io = { version = "0.16.2", optional = true }
+simple-sdmmc = { git = "https://github.com/Starry-Mix-THU/simple-sdmmc.git", rev = "db64be9", optional = true }
