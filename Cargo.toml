@@ -8,6 +8,7 @@ members = [
     "axdriver_display",
     "axdriver_pci",
     "axdriver_virtio",
+    "axdriver_input",
 ]
 
 [workspace.package]
@@ -20,9 +21,8 @@ repository = "https://github.com/arceos-org/axdriver_crates"
 categories = ["os", "no-std", "hardware-support"]
 
 [workspace.dependencies]
-axdriver_base = { path = "axdriver_base", version = "0.1" }
-axdriver_block = { path = "axdriver_block", version = "0.1" }
-axdriver_net = { path = "axdriver_net", version = "0.1" }
-axdriver_display = { path = "axdriver_display", version = "0.1" }
-axdriver_pci = { path = "axdriver_pci", version = "0.1" }
-axdriver_virtio = { path = "axdriver_virtio", version = "0.1" }
+axdriver_base = { path = "axdriver_base" }
+axdriver_block = { path = "axdriver_block" }
+axdriver_display = { path = "axdriver_display" }
+axdriver_input = { path = "axdriver_input" }
+axdriver_net = { path = "axdriver_net" }
