@@ -59,6 +59,12 @@ pub fn probe_mmio_device(
     Some((dev_type, transport))
 }
 
+// TODO(mivik): correct IRQ handling
+#[cfg(target_arch = "riscv64")]
+const PCI_IRQ_BASE: u32 = 0x20;
+#[cfg(target_arch = "loongarch64")]
+const PCI_IRQ_BASE: u32 = 0x10;
+
 /// Try to probe a VirtIO PCI device from the given PCI address.
 ///
 /// If the device is recognized, returns the device type and a transport object
@@ -67,12 +73,13 @@ pub fn probe_pci_device<H: VirtIoHal>(
     root: &mut PciRoot,
     bdf: DeviceFunction,
     dev_info: &DeviceFunctionInfo,
-) -> Option<(DeviceType, PciTransport)> {
+) -> Option<(DeviceType, PciTransport, u32)> {
     use virtio_drivers::transport::pci::virtio_device_type;
 
     let dev_type = virtio_device_type(dev_info).and_then(as_dev_type)?;
     let transport = PciTransport::new::<H>(root, bdf).ok()?;
-    Some((dev_type, transport))
+    let irq = PCI_IRQ_BASE + (bdf.device & 3) as u32;
+    Some((dev_type, transport, irq))
 }
 
 const fn as_dev_type(t: VirtIoDevType) -> Option<DeviceType> {

@@ -76,4 +76,9 @@ pub trait BaseDriverOps: Send + Sync {
 
     /// The type of the device.
     fn device_type(&self) -> DeviceType;
+
+    /// The IRQ number of the device.
+    fn irq_number(&self) -> Option<u32> {
+        None
+    }
 }
