@@ -64,6 +64,9 @@ pub fn probe_mmio_device(
 const PCI_IRQ_BASE: u32 = 0x20;
 #[cfg(target_arch = "loongarch64")]
 const PCI_IRQ_BASE: u32 = 0x10;
+#[cfg(target_arch = "aarch64")]
+const PCI_IRQ_BASE: u32 = 0x23;
+// note: interrupt-map = <0x00 0x00 0x00 0x01 0x8002 0x00 0x00 0x00 0x03>
 
 /// Try to probe a VirtIO PCI device from the given PCI address.
 ///
