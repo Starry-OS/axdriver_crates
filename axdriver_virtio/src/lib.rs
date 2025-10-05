@@ -60,6 +60,8 @@ pub fn probe_mmio_device(
 }
 
 // TODO(mivik): correct IRQ handling
+#[cfg(target_arch = "x86_64")]
+const PCI_IRQ_BASE: u32 = 0x20;
 #[cfg(target_arch = "riscv64")]
 const PCI_IRQ_BASE: u32 = 0x20;
 #[cfg(target_arch = "loongarch64")]
