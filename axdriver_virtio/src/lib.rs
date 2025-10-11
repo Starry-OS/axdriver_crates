@@ -21,6 +21,8 @@ mod gpu;
 mod input;
 #[cfg(feature = "net")]
 mod net;
+#[cfg(feature = "socket")]
+mod socket;
 
 #[cfg(feature = "block")]
 pub use self::blk::VirtIoBlkDev;
@@ -30,12 +32,16 @@ pub use self::gpu::VirtIoGpuDev;
 pub use self::input::VirtIoInputDev;
 #[cfg(feature = "net")]
 pub use self::net::VirtIoNetDev;
+#[cfg(feature = "socket")]
+pub use self::socket::VirtIoSocketDev;
+
+use log::warn;
 
 mod dummy;
 pub use dummy::DummyTransport;
 
 pub use virtio_drivers::transport::pci::bus as pci;
-pub use virtio_drivers::transport::{mmio::MmioTransport, pci::PciTransport, Transport};
+pub use virtio_drivers::transport::{Transport, mmio::MmioTransport, pci::PciTransport};
 pub use virtio_drivers::{BufferDirection, Hal as VirtIoHal, PhysAddr};
 
 use self::pci::{DeviceFunction, DeviceFunctionInfo, PciRoot};
@@ -94,6 +100,7 @@ const fn as_dev_type(t: VirtIoDevType) -> Option<DeviceType> {
         Network => Some(DeviceType::Net),
         GPU => Some(DeviceType::Display),
         Input => Some(DeviceType::Input),
+        Vsock => Some(DeviceType::Vsock),
         _ => None,
     }
 }
@@ -101,6 +108,7 @@ const fn as_dev_type(t: VirtIoDevType) -> Option<DeviceType> {
 #[allow(dead_code)]
 const fn as_dev_err(e: virtio_drivers::Error) -> DevError {
     use virtio_drivers::Error::*;
+    use virtio_drivers::device::socket::SocketError;
     match e {
         QueueFull => DevError::BadState,
         NotReady => DevError::Again,
@@ -112,6 +120,21 @@ const fn as_dev_err(e: virtio_drivers::Error) -> DevError {
         Unsupported => DevError::Unsupported,
         ConfigSpaceTooSmall => DevError::BadState,
         ConfigSpaceMissing => DevError::BadState,
-        _ => DevError::BadState,
+        SocketDeviceError(sock_error) => match sock_error {
+            SocketError::ConnectionExists => DevError::AlreadyExists,
+            SocketError::NotConnected => DevError::BadState,
+            SocketError::InvalidOperation
+            | SocketError::InvalidNumber
+            | SocketError::UnknownOperation(_) => DevError::InvalidParam,
+            SocketError::OutputBufferTooShort(_)
+            | SocketError::BufferTooShort
+            | SocketError::BufferTooLong(_, _) => DevError::InvalidParam,
+            SocketError::UnexpectedDataInPacket
+            | SocketError::PeerSocketShutdown
+            | SocketError::NoResponseReceived
+            | SocketError::ConnectionFailed => DevError::Io,
+            SocketError::InsufficientBufferSpaceInPeer => DevError::Again,
+            SocketError::RecycledWrongBuffer => DevError::BadState,
+        },
     }
 }

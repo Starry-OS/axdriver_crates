@@ -13,7 +13,7 @@ members = [
 
 [workspace.package]
 version = "0.1.2"
-authors = ["Yuekai Jia <equation618@gmail.com>"]
+authors = ["Yuekai Jia <equation618@gmail.com>", "Weikang Guo <guoweikang.kernel@gmail.com"]
 license = "GPL-3.0-or-later OR Apache-2.0 OR MulanPSL-2.0"
 homepage = "https://github.com/arceos-org/arceos"
 documentation = "https://arceos-org.github.io/axdriver_crates"
@@ -26,3 +26,4 @@ axdriver_block = { path = "axdriver_block" }
 axdriver_display = { path = "axdriver_display" }
 axdriver_input = { path = "axdriver_input" }
 axdriver_net = { path = "axdriver_net" }
+axdriver_vsock = { path = "axdriver_vsock" }

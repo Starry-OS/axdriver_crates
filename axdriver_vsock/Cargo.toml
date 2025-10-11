@@ -1,0 +1,19 @@
+[package]
+name = "axdriver_vsock"
+edition = "2024"
+description = "Common traits and types for socket drivers"
+documentation = "https://arceos-org.github.io/axdriver_crates/axdriver_socket"
+keywords = ["arceos", "driver", "socket"]
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+categories.workspace = true
+
+[features]
+default = []
+
+[dependencies]
+axdriver_base = { workspace = true }
+log = "0.4"
