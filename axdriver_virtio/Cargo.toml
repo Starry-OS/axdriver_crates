@@ -12,11 +12,12 @@ repository.workspace = true
 categories.workspace = true
 
 [features]
+alloc = ["virtio-drivers/alloc"]
 block = ["axdriver_block"]
-gpu = ["axdriver_display"]
-input = ["axdriver_input"]
-net = ["axdriver_net"]
-socket = ["axdriver_vsock"]
+gpu = ["alloc", "axdriver_display"]
+input = ["alloc", "axdriver_input"]
+net = ["alloc", "axdriver_net"]
+socket = ["alloc", "axdriver_vsock"]
 
 [dependencies]
 axdriver_base = { workspace = true }
@@ -25,6 +26,6 @@ axdriver_display = { workspace = true, optional = true }
 axdriver_input = { workspace = true, optional = true }
 axdriver_net = { workspace = true, optional = true }
 axdriver_vsock = { workspace = true, optional = true }
-virtio-drivers = "0.7.4"
+virtio-drivers = { version = "0.7.4", default-features = false }
 
 log = "0.4.0"

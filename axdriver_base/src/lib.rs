@@ -28,7 +28,7 @@ pub enum DeviceType {
     Display,
     /// Input device (e.g., keyboard, mouse).
     Input,
-    /// vsocket device (e.g., vsock).
+    /// Vsock device (e.g., virtio socket).
     Vsock,
 }
 

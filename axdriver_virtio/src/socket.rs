@@ -1,12 +1,16 @@
-use crate::as_dev_err;
+use alloc::vec;
+
 use axdriver_base::{BaseDriverOps, DevResult, DeviceType};
 use axdriver_vsock::{VsockDriverEvent, VsockDriverOps};
-use virtio_drivers::device::socket::{
-    SocketError, VirtIOSocket, VsockAddr, VsockConnectionManager as InnerDev, VsockEvent,
-    VsockEventType,
+use virtio_drivers::{
+    device::socket::{
+        VirtIOSocket, VsockAddr, VsockConnectionManager as InnerDev, VsockEvent, VsockEventType,
+    },
+    transport::Transport,
+    Hal,
 };
-use virtio_drivers::{Error as VirtIoError, Hal, transport::Transport};
-extern crate alloc;
+
+use crate::as_dev_err;
 
 /// The VirtIO socket device driver.
 pub struct VirtIoSocketDev<H: Hal, T: Transport> {
@@ -20,16 +24,16 @@ impl<H: Hal, T: Transport> VirtIoSocketDev<H, T> {
     /// Creates a new driver instance and initializes the device, or returns
     /// an error if any step fails.
     pub fn try_new(transport: T) -> DevResult<Self> {
-        let viotio_socket = VirtIOSocket::<H, _>::new(transport).map_err(as_dev_err)?;
+        let virtio_socket = VirtIOSocket::<H, _>::new(transport).map_err(as_dev_err)?;
         Ok(Self {
-            inner: InnerDev::new(viotio_socket),
+            inner: InnerDev::new(virtio_socket),
         })
     }
 }
 
 impl<H: Hal, T: Transport> BaseDriverOps for VirtIoSocketDev<H, T> {
     fn device_name(&self) -> &str {
-        "virtio-vsocket"
+        "virtio-socket"
     }
 
     fn device_type(&self) -> DeviceType {
@@ -168,7 +172,7 @@ fn convert_vsock_event<H: Hal, T: Transport>(
             Ok(VsockDriverEvent::Connected(local_port, peer_cid, peer_port))
         }
         VsockEventType::Received { length } => {
-            let mut data = alloc::vec![0u8; length];
+            let mut data = vec![0u8; length];
             let read = inner
                 .recv(
                     VsockAddr {

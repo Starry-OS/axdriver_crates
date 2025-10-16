@@ -1,6 +1,3 @@
-extern crate alloc;
-
-use crate::as_dev_err;
 use alloc::{borrow::ToOwned, string::String};
 
 use axdriver_base::{BaseDriverOps, DevResult, DeviceType};
@@ -11,6 +8,8 @@ use virtio_drivers::{
     transport::Transport,
     Hal,
 };
+
+use crate::as_dev_err;
 
 /// The VirtIO Input device driver.
 pub struct VirtIoInputDev<H: Hal, T: Transport> {
